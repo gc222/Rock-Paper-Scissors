@@ -1,3 +1,28 @@
+// global vars
+let pScore = 0;
+let cScore = 0;
+const buttons = document.querySelectorAll(".player-move");
+const gameOver = document.getElementById("game-over");
+
+// reset button
+const reset = document.createElement("button");
+reset.textContent = "RESET GAME";
+reset.classList.add("reset");
+
+reset.addEventListener("click", resetGame);
+
+// use .forEach on buttons nodeList to use eventListener on each button
+// define an arrow function then call the playRound function and pass in arguments 
+// dataset.selection is the predefined data var on the HTML button i.e. "rock"
+buttons.forEach(button => {
+    button.addEventListener("click", () => {
+        playRound(button.dataset.selection, computerPlay())
+    })
+})
+
+
+
+
 function computerPlay() {
     const option = ["rock", "paper", "scissors"];
     return option[Math.floor(Math.random() * option.length)];
@@ -7,52 +32,74 @@ function computerPlay() {
     // 0.999 * 3 = 2.997 -> any number below 0.999 -> floor to 2
 }
 
+
 function playRound(playerSelection, csel) {
-    // csel lower case
     psel = playerSelection.toLowerCase()
+    let roundRes;
 
-    // rock scissors w
-    // rock paper l      
+    if (psel === csel) roundRes = "It's a draw."
 
-    // paper rock w
-    // paper scissors l
-    
-    // scissors paper w
-    // scissors rock l
+    if (
+        (psel == "rock" && csel == "scissors") ||
+        (psel == "paper" && csel == "rock") ||
+        (psel == "scissors" && csel == "paper")
+    ) {
+        pScore ++; 
+        roundRes = `Your ${playerSelection} beats ${csel}!`;
 
-    if (psel == csel) return "It's a Draw!";            // draw
+    } else if (
+        (psel == "rock" && csel == "paper") ||
+        (psel == "paper" && csel == "scissors") || 
+        (psel == "scissors" && csel == "rock")
+    ) {
+        cScore ++; 
+        roundRes = `Your ${playerSelection} loses to ${csel}.`;
+    }
 
-    if (psel == "rock" && csel == "scissors") {         // rock
-        return "You Win!";
-    } else if (psel == "rock" && csel == "paper") {
-        return "You Lose!";
+    displayScore(roundRes)
+    checkScore();
+}
 
-    } else if (psel == "paper" && csel == "rock") {     // paper
-        return "You Win!"
-    } else if (psel == "paper" && csel == "scissors") {
-        return "You Lose!"
 
-    } else if (psel == "scissors" && csel == "paper") { // scissors
-        return "You Win!";
-    } else if (psel == "scissors" && csel == "rock") {
-        return "You Lose!";
+function displayScore(roundRes = "") {
+    const displayPScore = document.getElementById("pscore");
+    const displayCScore = document.getElementById("cscore");
+    const roundResult = document.getElementById("round-result");
+
+    displayPScore.textContent = `${pScore}`;
+    displayCScore.textContent = `${cScore}`;
+
+    roundResult.textContent = roundRes;
+}
+
+function checkScore() {
+
+    if (pScore >= 5) {
+        gameOver.textContent = "You won!";
+    } else if (cScore >= 5) {
+        gameOver.textContent = "You lost.";
+    }
+
+    // if game end then disable buttons and add a reset button
+    if ((pScore >= 5) || (cScore >= 5)) {
+        buttons.forEach(button => {
+            button.disabled = true; 
+        });
+        document.body.appendChild(reset);
     }
 
 }
 
-function playerPlay() {
-    return prompt("Choose Rock, Paper, or Scissors.");
+function resetGame() {
+    buttons.forEach(button => {
+        button.disabled = false;
+    });
+
+    // reset scores
+    pScore = 0;
+    cScore = 0;
+    displayScore()
+
+    document.body.removeChild(reset);   // remove reset button
+    gameOver.textContent = "";
 }
-
-function game() {
-    round = 5;
-
-    while (round > 0) {
-        result = playRound(playerPlay(), computerPlay());     // plays a round
-        console.log(result);
-        round--                         // decrement
-    }
-    
-}
-
-game();
