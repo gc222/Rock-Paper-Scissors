@@ -9,6 +9,7 @@ const reset = document.createElement("button");
 reset.textContent = "RESET GAME";
 reset.classList.add("reset");
 
+// listen for resetGame button
 reset.addEventListener("click", resetGame);
 
 // use .forEach on buttons nodeList to use eventListener on each button
@@ -85,14 +86,14 @@ function checkScore() {
         buttons.forEach(button => {
             button.disabled = true; 
         });
-        document.body.appendChild(reset);
+        document.body.appendChild(reset);   // add reset button
     }
 
 }
 
 function resetGame() {
     buttons.forEach(button => {
-        button.disabled = false;
+        button.disabled = false;    // re-enable the button
     });
 
     // reset scores
